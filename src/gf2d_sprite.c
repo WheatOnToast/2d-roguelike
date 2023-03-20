@@ -405,4 +405,30 @@ void gf2d_sprite_render(
     }
 }
 
+Sprite* gf2d_sprite_load(const char* filename, int frame_width, int frame_height, Uint32 frames_per_line)
+{
+    Sprite* sprite;
+    sprite = gf2d_sprite_get_by_filename(filename);
+    if (sprite)
+    {
+        sprite->_inuse++;
+        return sprite;
+    }
+    sprite = gf2d_sprite_new();
+    if (!sprite)
+    {
+        return NULL;
+    }
+
+    //sprite->surface = sprite->texture->surface;
+    //if (frame_width <= 0)frame_width = sprite->texture->width;
+    //if (frame_height <= 0)frame_height = sprite->texture->height;
+    sprite->frameWidth = frame_width;
+    sprite->frameHeight = frame_height;
+    if (frames_per_line)sprite->framesPerLine = frames_per_line;
+    else sprite->framesPerLine = 1;
+    gfc_line_cpy(sprite->filename, filename);
+    //gf2d_sprite_create_vertex_buffer(sprite);
+    return sprite;
+}
 /*eol@eof*/

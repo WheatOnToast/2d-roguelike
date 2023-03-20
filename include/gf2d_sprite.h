@@ -9,12 +9,18 @@
 
 typedef struct Sprite_S
 {
+    Uint8 _inuse;
     int ref_count;
     TextLine filepath;
     SDL_Texture *texture;
     SDL_Surface *surface;
     Uint32 frames_per_line;
     Uint32 frame_w,frame_h;
+
+    TextLine filename;               /**<the name of the file used to create the sprite*/
+    Uint32 frameCount;             /**<how many frames are loaded for this model*/
+    Uint8 framesPerLine;          /**<how many frames are per line in the sprite sheet*/
+    Uint32 frameWidth, frameHeight; /*<the size, in pixels, of the individual sprite frames*/
 }Sprite;
 
 /**
@@ -143,5 +149,6 @@ void gf2d_sprite_draw_to_surface(
  */
 Sprite *gf2d_sprite_new();
 
+Sprite* gf2d_sprite_load(const char* filename, int frame_width, int frame_height, Uint32 frames_per_line);
 
 #endif
