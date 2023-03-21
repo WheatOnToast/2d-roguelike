@@ -166,4 +166,15 @@ Shape entity_get_shape(Entity* ent)
     return shape;
 }
 
+Bool entity_clip(Entity* entA, Entity* entB)
+{
+    if (entA->position.x == entB->position.x && entA->position.y == entB->position.y)
+    {
+        return 1;
+    }
+    else 
+    {
+        return 0;
+    }
+}
 /*eol@eof*/

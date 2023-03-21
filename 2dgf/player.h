@@ -7,5 +7,6 @@
 Entity* player_new(Vector2D position);
 Entity* player_get();
 Vector2D player_get_position();
+Uint8 entity_clip_with_player(Entity* ent);
 
 #endif

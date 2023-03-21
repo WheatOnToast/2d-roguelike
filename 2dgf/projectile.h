@@ -15,6 +15,13 @@
  * @return NULL on failure, or a pointer to the new projectile
  */
 Entity* projectile_new(Entity* parent, Vector2D position, Vector2D dir, float speed, float damage, const char* actor);
-Entity* create_projectile(Vector2D position);
+Entity* create_projectile_right(Vector2D position);
+Entity* create_projectile_left(Vector2D position);
+Entity* create_projectile_up(Vector2D position);
+Entity* create_projectile_down(Vector2D position);
+void projectile_think_right(Entity* self);
+void projectile_think_left(Entity* self);
+void projectile_think_up(Entity* self);
+void projectile_think_down(Entity* self);
 
 #endif

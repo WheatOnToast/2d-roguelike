@@ -126,6 +126,9 @@
     <ClCompile Include="projectile.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="gui.c">
+      <Filter>Header Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\gf2d_draw.h">
@@ -240,6 +243,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="projectile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gui.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

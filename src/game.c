@@ -13,7 +13,7 @@
 #include "../2dgf/entity.h"
 #include "../2dgf/randEnemy.h"
 #include "../2dgf/player.h"
-
+#include "../2dgf/gui.h"
 int main(int argc, char * argv[])
 {
     /*variable declarations*/
@@ -54,15 +54,16 @@ int main(int argc, char * argv[])
     sprite = gf2d_sprite_load_image("images/backgrounds/bg_flat.png");
     mouse = gf2d_sprite_load_all("images/pointer.png",32,32,16,0);
 
-    ent = randEnemy_new(vector2d(100, 100));
-    Entity* player1 = player_new(vector2d(100, 100));
+    //ent = randEnemy_new(vector2d(100, 100));
+    Entity* player1 = player_new(vector2d(600, 570));
     Entity* player2 = player_new(vector2d(1400, 100));
     player1->canMove = 1;
     player2->canMove = 0;
-
+    
     /*main game loop*/
     while(!done)
     {
+        gui_draw_hud();
         gfc_input_update(); // input update
         SDL_PumpEvents();   // update SDL's internal event structures
         keys = SDL_GetKeyboardState(NULL); // get the keyboard state for this frame
@@ -73,7 +74,7 @@ int main(int argc, char * argv[])
         entity_think_all();
         entity_update_all();
         camera_world_snap();
-
+        
         gf2d_graphics_clear_screen();// clears drawing buffers
         // all drawing should happen betweem clear_screen and next_frame
             //backgrounds drawn first
@@ -90,7 +91,76 @@ int main(int argc, char * argv[])
                 NULL,
                 &mouseColor,
                 (int)mf);
-
+            if (player1->weaponType == 0)
+            {
+                char a = (char)player1->weaponType;
+                char file = "images/weapon0.png";
+                gf2d_sprite_draw(
+                    gf2d_sprite_load_all("images/weapon0.png", 64, 64, 16, 0),
+                    vector2d(100, 100),
+                    NULL,
+                    NULL,
+                    NULL,
+                    NULL,
+                    NULL,
+                    0);
+            }
+            else if (player1->weaponType == 1)
+            {
+                char a = (char)player1->weaponType;
+                char file = "images/weapon0.png";
+                gf2d_sprite_draw(
+                    gf2d_sprite_load_all("images/weapon1.png", 64, 64, 16, 0),
+                    vector2d(100, 100),
+                    NULL,
+                    NULL,
+                    NULL,
+                    NULL,
+                    NULL,
+                    0);
+            }
+            else if (player1->weaponType == 2)
+            {
+                char a = (char)player1->weaponType;
+                char file = "images/weapon0.png";
+                gf2d_sprite_draw(
+                    gf2d_sprite_load_all("images/weapon2.png", 64, 64, 16, 0),
+                    vector2d(100, 100),
+                    NULL,
+                    NULL,
+                    NULL,
+                    NULL,
+                    NULL,
+                    0);
+            }
+            else if (player1->weaponType == 3)
+            {
+                char a = (char)player1->weaponType;
+                char file = "images/weapon0.png";
+                gf2d_sprite_draw(
+                    gf2d_sprite_load_all("images/weapon3.png", 64, 64, 16, 0),
+                    vector2d(100, 100),
+                    NULL,
+                    NULL,
+                    NULL,
+                    NULL,
+                    NULL,
+                    0);
+            }
+            else if (player1->weaponType == 4)
+            {
+                char a = (char)player1->weaponType;
+                char file = "images/weapon0.png";
+                gf2d_sprite_draw(
+                    gf2d_sprite_load_all("images/weapon4.png", 64, 64, 16, 0),
+                    vector2d(100, 100),
+                    NULL,
+                    NULL,
+                    NULL,
+                    NULL,
+                    NULL,
+                    0);
+            }
         gf2d_graphics_next_frame();// render current draw frame and skip to the next frame
         
         if (keys[SDL_SCANCODE_ESCAPE])done = 1; // exit condition
@@ -100,7 +170,10 @@ int main(int argc, char * argv[])
         
     }
     level_free(level);
-    entity_free(ent);
+   //entity_free(ent);
+    FILE* file;
+    file = fopen("results.txt", "w");
+    fprintf(file, "---====Hope you enjoyed the game!====---\n\n ---==== Game Statistics ====---\n- Number of times jumped: %d\n- Number of bullets shot: %d\n- Number of weapon switches: %d", player1->numOfJumps, player1->numOfBulletsShot, player1->numOfWeaponSwitches);
     slog("---==== END ====---");
     return 0;
 }

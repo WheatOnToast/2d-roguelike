@@ -31,8 +31,18 @@ typedef struct Entity_S {
 	int damage;
 	Bool canJump;
 	Bool canMove;
+	int weaponType;
+	Bool shootRight;
 	struct Entity_S* parent;    /**<entity that spawned this one*/
-	float       cooldown;
+
+	//====
+	//game statistics
+	int numOfJumps;
+	int numOfWeaponSwitches;
+	int numOfBulletsShot;
+	//====
+
+	float cooldown;
 	void (*think)(struct Entity *self);
 	int (*update)(struct Entity *self);
 	void (*draw)(struct Entity *self);

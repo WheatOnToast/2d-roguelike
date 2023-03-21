@@ -2,6 +2,7 @@
 #include "gf2d_graphics.h"
 #include "camera.h"
 #include "randEnemy.h"
+#include "player.h"
 
 void randEnemy_think(Entity *self);
 
@@ -19,7 +20,7 @@ Entity* randEnemy_new(Vector2D position)
 	ent->think = randEnemy_think;
 	ent->maxFrame = 4;
 
-	ent->shape = gfc_shape_circle(0, 0, 20);// shape position becomes offset from entity position, in this case zero
+	ent->shape = gfc_shape_circle(0, 0, 5);// shape position becomes offset from entity position, in this case zero
 	ent->body.shape = &ent->shape;
 	ent->body.worldclip = 1;
 	ent->body.team = 1;
@@ -51,6 +52,10 @@ void randEnemy_think(Entity* self)
 		vector2d_clear(self->velocity);
 	}
 
+
+	if (entity_clip_with_player(self) != 0) {
+		//entity_free(self);
+	}
 	//camera_center_at(self->position);
 }
 
