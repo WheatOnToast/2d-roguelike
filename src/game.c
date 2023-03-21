@@ -1,5 +1,6 @@
 #include <SDL.h>
 #include "simple_logger.h"
+#include "simple_json.h"
 
 #include "gfc_list.h"
 #include "gfc_audio.h"
@@ -171,10 +172,14 @@ int main(int argc, char * argv[])
     }
     level_free(level);
    //entity_free(ent);
-    FILE* file;
-    file = fopen("results.txt", "w");
-    fprintf(file, "---====Hope you enjoyed the game!====---\n\n ---==== Game Statistics ====---\n- Number of times jumped: %d\n- Number of bullets shot: %d\n- Number of weapon switches: %d", player1->numOfJumps, player1->numOfBulletsShot, player1->numOfWeaponSwitches);
-    slog("---==== END ====---");
+    SJson* json, * src;
+    json = sj_load("config/results.json");
+    src = sj_copy(json);
+    sj_object_insert(src, "totalJumps", sj_new_int(player1->numOfJumps));
+    sj_object_insert(src, "totalBulletsShot", sj_new_int(player1->numOfBulletsShot));
+    sj_object_insert(src, "totalWeaponSwitches", sj_new_int(player1->numOfWeaponSwitches));
+    sj_save(src, "config/results.json");
+
     return 0;
 }
 

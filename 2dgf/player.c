@@ -29,15 +29,48 @@ Entity* player_new(Vector2D position)
 {
 	PlayerData* data;
 	Entity* ent;
+	SJson* json, * player;
+	int health, defense, attack, speed;
+	const char *name, *sprite;
+
 	ent = entity_new();
 	if (!ent)return NULL;
-    gfc_line_cpy(ent->name, "player");
+
+	// ----==== JSON File Load ====----
+	json = sj_load("config/player.json");
+	if (!json) {
+		slog("Can't find player JSON");
+		return NULL;
+	}
+	//finding "player" key
+	player = sj_object_get_value(json, "player");
+
+	//extracting values from "player"
+	name = sj_object_get_value_as_string(player, "name");
+	sprite = sj_object_get_value_as_string(player, "sprite");
+	sj_object_get_value_as_int(player, "health", &health);
+	sj_object_get_value_as_int(player, "defense", &defense);
+	sj_object_get_value_as_int(player, "attack", &attack);
+	sj_object_get_value_as_int(player, "speed", &speed);
+
+	//inserting JSON values into player entity and data
+    gfc_line_cpy(ent->name, name);
 	ent->sprite = gf2d_sprite_load_all(
-		"images/britten.png",
+		sprite,
 		64,
 		64,
 		16,
 		0);
+	data = gfc_allocate_array(sizeof(PlayerData), 1);
+	if (data)
+	{
+		data->health = health;
+		data->attack = attack;
+		data->defense = defense;
+		data->speed = speed;
+	}
+	// ----=============================----
+
 	ent->maxFrame = 0;
     ent->think = player_think;
     ent->draw = player_draw;
@@ -52,16 +85,10 @@ Entity* player_new(Vector2D position)
 	vector2d_copy(ent->position, position);
 	ent->drawOffset = vector2d(0, 0);
     ent->speed = 2.5;
-	data = gfc_allocate_array(sizeof(PlayerData), 1);
-	if (data)
-	{
-		data->health = 3;
-		data->attack = 1;
-		data->defense = 1;
-		data->speed = 2;
-	}
+
 
 	thePlayer = ent;
+	sj_free(json);
 	return ent;
 }
 

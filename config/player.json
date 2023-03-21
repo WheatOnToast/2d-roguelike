@@ -1,0 +1,11 @@
+{
+  "player": 
+  {
+    "attack": 1,
+    "defense": 1,
+    "health": 3,
+    "name": "player",
+    "speed": 3,
+    "sprite": "images/britten.png"
+  }
+}
