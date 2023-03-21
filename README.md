@@ -1,30 +1,26 @@
-# gameframework2d (GF2D)
-a collection of utlitity functions designed to facilitate creating 2D games with SDL2
-This project is specifically intended to function as an educational tool for my students taking 2D Game Programming.
+# 2D Platforming Roguelike
+This game will have you controlling two characters at the same time dealing with enemies on both sides.
 
-FOR FULL FEATURES CHECKOUT THE MASTER BRANCH
-Students: Don't do that.  You are not ready.... yet.
+# Controls
 
-The main branch is kept deliberately minimal to allow students to build out systems as they are learning.
-Other branches have more complete system: Collisions, Windows, Armatures, Entities, Particles...
+- **Move with WASD**
+- **"W"** - Tiny Jump (Tap multiple times to "flap" around the screen)
+- **"G"** - Shoot (Press this button to shoot bullets)
+- **"E"** - Gun Switch (Press this button to change your bullets)
+- **"R"** - Screen Switch (Press this button to change screens)
 
-# Build Process
+# Common Deliverables
 
-Before you can build the example code we are providing for you, you will need to obtain the libraries required
-by the source code
- - SDL2
- - SDL2_image
- - SDL2_mixer
- - SDL2_ttf
-There are additional sub modules that are needed for this project to work as well, but they can be pulled right from within the project.
-Performable from the following steps from the root of the cloned git repository within a terminal. 
+- Functioning Entity System **(Player and projectiles can be seen within the game)**
+- Fully interact-able environment **(Player can jump on platforms)**
+- User Interface (HUD, Stats, Messages, menus) **(Top left of the screen displays what kind of bullets you will shoot)**
+- File read / write access **(File "results.txt" is created and holds various stats of the last game session)**
+- README for how to play and see all game features **(You are reading it right now :) )**
 
-Make sure you fetch submodules: `git submodule update --init --recursive`
-Go into each submodule's src directory and type:
-`make`
-`make static`
+# Personal Deliverables
 
-Once each submodule has been made you can go into the base project src folder anre simply type:
-`make`
-
-You should now have a `gf2d` binary within the root of your git repository. Executing this will start your game.
+- platforming mechanics **(You can jump to various platforms by tapping the "w" key)**
+- Create the dual screen mechanic **(Pressing the "r" key will switch screens)**
+- 5 guns with different behaviors **(Pressing the "e" key will change your gun's bullet behavior)**
+- 5 varieties of enemies for top & bottom screen **(Not completed)**
+- 5 stat boosting items **(Not completed)**
