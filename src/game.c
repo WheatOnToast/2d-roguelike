@@ -175,6 +175,7 @@ int main(int argc, char * argv[])
     SJson* json, * src;
     json = sj_load("config/results.json");
     src = sj_copy(json);
+
     sj_object_insert(src, "totalJumps", sj_new_int(player1->numOfJumps));
     sj_object_insert(src, "totalBulletsShot", sj_new_int(player1->numOfBulletsShot));
     sj_object_insert(src, "totalWeaponSwitches", sj_new_int(player1->numOfWeaponSwitches));
