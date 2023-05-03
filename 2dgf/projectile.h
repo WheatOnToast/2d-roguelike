@@ -23,5 +23,8 @@ void projectile_think_right(Entity* self);
 void projectile_think_left(Entity* self);
 void projectile_think_up(Entity* self);
 void projectile_think_down(Entity* self);
-
+int projectile_getHealth();
+void projectile_setHealth(int num);
+int projectile_getSize();
+void projectile_setSize(int size);
 #endif

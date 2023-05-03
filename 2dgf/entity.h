@@ -30,11 +30,18 @@ typedef struct Entity_S {
 	int health;
 	int damage;
 	Bool canJump;
+	Bool selected;
 	Bool canMove;
 	int weaponType;
 	Bool shootRight;
+	int bulletType;
+	int playerType;
 	struct Entity_S* parent;    /**<entity that spawned this one*/
-
+	int BPM;
+	Bool beatTrue;
+	int powerUpCount;
+	int enemyType;
+	int AI;
 	//====
 	//game statistics
 	int numOfJumps;
@@ -103,4 +110,6 @@ Shape entity_get_shape(Entity* ent);
  * @return a shape where its position + velocity is set to the world position
  */
 Shape entity_get_shape_after_move(Entity* ent);
+
+Entity* entity_get_list();
 #endif

@@ -10,6 +10,9 @@
 #include "weapon.h"
 #include "randEnemy.h"
 #include "gui.h"
+#include "metronome.h"
+#include "gfc_audio.h"
+#include "powerup.h"
 
 void player_think(Entity* self);
 void player_draw(Entity* self);
@@ -25,7 +28,7 @@ typedef struct
 	Uint32 speed;
 }PlayerData;
 
-Entity* player_new(Vector2D position)
+Entity* player_new(Vector2D position, int playerType)
 {
 	PlayerData* data;
 	Entity* ent;
@@ -75,7 +78,7 @@ Entity* player_new(Vector2D position)
     ent->think = player_think;
     ent->draw = player_draw;
     ent->free_entity = player_free;
-    ent->shape = gfc_shape_rect(2, 2, 2, 4);// shape position becomes offset from entity position, in this case zero
+    ent->shape = gfc_shape_rect(32, 32, 64, 64);// shape position becomes offset from entity position, in this case zero
 	ent->body.shape = &ent->shape;
 	ent->velocity.x = 4;
 	ent->velocity.y = 4;
@@ -83,37 +86,23 @@ Entity* player_new(Vector2D position)
 	ent->body.team = 1;
 	ent->weaponType = 0;
 	vector2d_copy(ent->position, position);
-	ent->drawOffset = vector2d(0, 0);
-    ent->speed = 2.5;
-
-
+	ent->drawOffset = vector2d(-32, -32);
+    ent->speed = 50;
+	ent->playerType = playerType;
+	ent->selected = 0;
+	ent->powerUpCount = 0;
+	ent->AI = 1;
 	thePlayer = ent;
 	sj_free(json);
 	return ent;
 }
 
-void player_attack(Entity* self)
-{
-	Vector2D dir;
 
-	PlayerData* data;
-	WeaponData* wData;
-	if ((!self) || (!self->data))return;
-	data = self->data;
-	dir = vector2d_from_angle(30);
-	projectile_new(self, thePlayer->position, dir, 5, 10, "actors/plasma_bolt.actor");
-	self->cooldown = 5;
-	if ((!self->action) || (gfc_strlcmp(self->action->name, "shoot") != 0))
-	{
-		self->action = gf2d_actor_set_action(self->actor, "shoot", &self->frame);
-	}
-}
-
-Vector2D player_get_position()
+Vector2D player_get_position(Entity* self)
 {
 	Vector2D v = { 0 };
-	if (!thePlayer)return v;
-	return thePlayer->position;
+	if (!self)return v;
+	return self->position;
 }
 
 Entity* player_get()
@@ -130,19 +119,13 @@ void player_draw(Entity* self)
 	gf2d_draw_circle(drawPosition, 20, GFC_COLOR_YELLOW);
 }
 
+int numOfBullets = 1;
+int playerHealth = 1;
+int playerAImove = 1;
+
 void player_think(Entity* self)
 {
 
-	if (level_shape_clip(level_get_active_level(), entity_get_shape_after_move(self)) != 0) { //if touching a platform
-		self->canJump = 1;
-	}
-	else if (level_shape_clip(level_get_active_level(), entity_get_shape_after_move(self)) == 0) { //if not touching a platform
-		self->position.y += 3;
-		//self->velocity.y += 2.5;
-	}
-	if (self->position.y > 700) {
-		self->position.y += 3;
-	}
 
 	Vector2D dir;
 	dir.x = 30;
@@ -152,95 +135,166 @@ void player_think(Entity* self)
 	Vector2D walk = { 0 };
 	if (!self) return;
 
-	
+
+
 	if (gfc_input_command_pressed("switch"))
 	{
 
-		if (self->canMove == 1)
+		if (self->selected == 1)
 		{
-			self->canMove = 0;
+			self->selected = 0;
 		}
-		else if (self->canMove == 0)
+		else if (self->selected == 0)
 		{
-			self->canMove = 1;
+			self->selected = 1;
+		}
+	}
+	if (gfc_input_command_pressed("powerup"))
+	{
+		if (powerup_get_powerUpCount() == 1) {
+			self->speed += 50;
+			powerup_set_powerUpCount(0);
+		}
+		if (powerup_get_powerUpCount() == 2) {
+			int pHealth = projectile_getHealth;
+			projectile_setHealth(pHealth + 20);
+			powerup_set_powerUpCount(0);
+		}
+		if (powerup_get_powerUpCount() == 3) {
+			int playerHealth = player_getHealth();
+			if (playerHealth < 5) {
+				player_setHealth(playerHealth + 1);
+			}
+			powerup_set_powerUpCount(0);
+		}
+		if (powerup_get_powerUpCount() == 4) {
+			int bulletsNum = player_getNumOfBullets();
+			player_setNumOfBullets(bulletsNum + 1);
+			powerup_set_powerUpCount(0);
+		}
+		if (powerup_get_powerUpCount() == 5) {
+			Entity* ent_list = entity_get_list();
+			for (int i = 0; i < 1024; i++) {
+				if (ent_list[i].enemyType > 0) {
+					entity_free(&ent_list[i]);
+				}
+			}
+			powerup_set_powerUpCount(0);
 		}
 	}
 	if (gfc_input_command_pressed("gunchange"))
 	{
 		int nextNum = self->weaponType + 1;
-		if (nextNum > 4)
+		if (nextNum > 1)
 		{
 			self->weaponType = 0;
+			if (self->playerType == 0 && self->selected) {
+				self->sprite = gf2d_sprite_load_all(
+					"images/britten_yellow.png",
+					64,
+					64,
+					16,
+					0);
+			}
+			else if(self->playerType == 1 && self->selected) {
+				self->sprite = gf2d_sprite_load_all(
+					"images/britten_red.png",
+					64,
+					64,
+					16,
+					0);
+			}
 		}
 		else {
 			self->weaponType++;
+			if (self->playerType == 0 && self->selected) {
+				self->sprite = gf2d_sprite_load_all(
+					"images/britten_green.png",
+					64,
+					64,
+					16,
+					0);
+			}
+			else if (self->playerType == 1 && self->selected) {
+				self->sprite = gf2d_sprite_load_all(
+					"images/britten_blue.png",
+					64,
+					64,
+					16,
+					0);
+			}
 		}
 
 		gui_set_gun(self->weaponType);
 		self->numOfWeaponSwitches++;
 	}
-	if (self->canMove == 1)
+
+	if (metronome_isBeatTrue() != 1) {
+		playerAImove = 1;
+	}
+
+	if (self->selected == 0 && metronome_isBeatTrue() && playerAImove == 1 && self->AI == 1) {
+		playerAImove = 0;
+		int playerMove = rand() % 4;
+		switch (playerMove) {
+		case 0:
+			self->position.x += 2;
+			walk.x += 1;
+			break;
+		case 1:
+			self->position.x -= 2;
+			walk.x = -1;
+			break;
+		case 2:
+			self->position.y += 2;
+			walk.y += 1;
+			break;
+		case 3:
+			self->position.y -= 2;
+			walk.y = -1;
+			break;
+		}
+
+		if ((walk.x) || (walk.y))
+		{
+			vector2d_normalize(&walk);
+			vector2d_scale(walk, walk, self->speed);
+			vector2d_copy(self->velocity, walk);
+		}
+		else
+		{
+			vector2d_clear(self->velocity);
+		}
+	}
+
+	if (self->selected == 1 && metronome_isBeatTrue())
 	{
 		camera_center_at(self->position);
-		if (gfc_input_command_down("walkleft"))
+		if (gfc_input_command_pressed("walkleft"))
 		{
 			self->shootRight = 0;
 			walk.x = -1;
-			self->position.x -= 3;
+			self->position.x -= self->speed;
+			projectile_setSize(4);
 		}
-		if (gfc_input_command_down("walkright"))
+		if (gfc_input_command_pressed("walkright"))
 		{
 			self->shootRight = 1;
 			walk.x += 1;
-			self->position.x += 3;
+			self->position.x += self->speed;
+			projectile_setSize(4);
 		}
 		if (gfc_input_command_pressed("walkup"))
 		{
-			self->canJump = 0;
-			self->position.y -= 100;
-
-			self->numOfJumps++;
+			walk.y = -1;
+			self->position.y -= self->speed;
+			projectile_setSize(4);
 		}
-		if (gfc_input_command_pressed("attack"))
+		if (gfc_input_command_pressed("walkdown"))
 		{
-			int bCreate = self->position.y - 50;
-			if (self->weaponType == 0 && self->shootRight == 1) //WEAPON 0
-			{
-				create_projectile_right(vector2d(self->position.x, bCreate));
-				self->numOfBulletsShot++;
-			}
-			else if (self->weaponType == 0 && self->shootRight == 0)
-			{
-				create_projectile_left(vector2d(self->position.x, bCreate));
-				self->numOfBulletsShot++;
-			}
-
-			if (self->weaponType == 1) { //WEAPON 1
-				create_projectile_right(vector2d(self->position.x, bCreate));
-				create_projectile_left(vector2d(self->position.x, bCreate));
-				self->numOfBulletsShot += 2;
-			}
-
-			if (self->weaponType == 2) { //WEAPON 2
-				create_projectile_right(vector2d(self->position.x, bCreate));
-				create_projectile_left(vector2d(self->position.x, bCreate));
-				create_projectile_up(vector2d(self->position.x, bCreate));
-				self->numOfBulletsShot += 3;
-			}
-
-			if (self->weaponType == 3) { //WEAPON 3
-				create_projectile_up(vector2d(self->position.x, bCreate));
-				create_projectile_down(vector2d(self->position.x, bCreate));
-				self->numOfBulletsShot += 2;
-			}
-
-			if (self->weaponType == 4) { //WEAPON 4
-				create_projectile_right(vector2d(self->position.x, bCreate));
-				create_projectile_left(vector2d(self->position.x, bCreate));
-				create_projectile_up(vector2d(self->position.x, bCreate));
-				create_projectile_down(vector2d(self->position.x, bCreate));
-				self->numOfBulletsShot += 4;
-			}
+			walk.y += 1;
+			self->position.y += self->speed;
+			projectile_setSize(4);
 		}
 	
 		if ((walk.x) || (walk.y))
@@ -254,7 +308,59 @@ void player_think(Entity* self)
 			vector2d_clear(self->velocity);
 		}
 	}
+	else {
+		projectile_setSize(1);
+	}
 
+	if (self->selected == 1 &&  gfc_input_command_pressed("attack"))
+	{
+		int bCreateY = self->position.y + 64;
+		int bCreateX = self->position.x + 64;
+		if (self->weaponType == 0 && self->playerType == 0) //player 0 shoot bullet right
+		{
+			for (int i = 0; i < numOfBullets; i++) {
+				int y = bCreateY + (i*32);
+				create_projectile_right(vector2d(bCreateX, y));
+				self->numOfBulletsShot++;
+			}
+		}
+		else if (self->weaponType == 1 && self->playerType == 0) //player 0 shoot bullet left
+		{
+			for (int i = 0; i < numOfBullets; i++) {
+				int y = bCreateY + (i * 32);
+				create_projectile_left(vector2d(bCreateX, y));
+				self->numOfBulletsShot++;
+			}
+		}
+
+		if (self->weaponType == 0 && self->playerType == 1) { //player 1 shoot bullet up
+			self->sprite = gf2d_sprite_load_all(
+				"images/britten_blue.png",
+				64,
+				64,
+				16,
+				0);
+			for (int i = 0; i < numOfBullets; i++) {
+				int x = bCreateX + (i * 32);
+				create_projectile_up(vector2d(x, bCreateY));
+				self->numOfBulletsShot += 1;
+			}
+		}
+		else if (self->weaponType == 1 && self->playerType == 1) { //player 1 shoot bullet down
+			self->sprite = gf2d_sprite_load_all(
+				"images/britten_red.png",
+				64,
+				64,
+				16,
+				0);
+			for (int i = 0; i < numOfBullets; i++) {
+				int x = bCreateX + (i * 32);
+				create_projectile_down(vector2d(x, bCreateY));
+				self->numOfBulletsShot += 1;
+			}
+			
+		}
+	}
 }
 
 void player_free(Entity* self)
@@ -266,4 +372,18 @@ void player_free(Entity* self)
 Uint8 entity_clip_with_player(Entity* ent)
 {
 	return (gfc_shape_overlap(ent->shape, thePlayer->shape));
+}
+
+int player_getNumOfBullets() {
+	return numOfBullets;
+}
+void player_setNumOfBullets(int num) {
+	numOfBullets = num;
+}
+
+int player_getHealth() {
+	return playerHealth;
+}
+void player_setHealth(int num) {
+	playerHealth = num;
 }

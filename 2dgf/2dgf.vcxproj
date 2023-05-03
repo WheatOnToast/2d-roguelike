@@ -169,18 +169,28 @@
     <ClCompile Include="..\src\gf2d_graphics.c" />
     <ClCompile Include="..\src\gf2d_sprite.c" />
     <ClCompile Include="actor.c" />
+    <ClCompile Include="blueEnemy.c" />
     <ClCompile Include="body.c" />
+    <ClCompile Include="boss2.c" />
+    <ClCompile Include="boss3.c" />
     <ClCompile Include="camera.c" />
     <ClCompile Include="collision.c" />
     <ClCompile Include="dynamic_body.c" />
     <ClCompile Include="entity.c" />
+    <ClCompile Include="greenEnemy.c" />
     <ClCompile Include="gui.c" />
+    <ClCompile Include="kehoeBoss.c" />
     <ClCompile Include="level.c" />
+    <ClCompile Include="metronome.c" />
     <ClCompile Include="player.c" />
+    <ClCompile Include="powerup.c" />
     <ClCompile Include="projectile.c" />
     <ClCompile Include="randEnemy.c" />
+    <ClCompile Include="redEnemy.c" />
     <ClCompile Include="space.c" />
     <ClCompile Include="weapon.c" />
+    <ClCompile Include="whiteEnemy.c" />
+    <ClCompile Include="yellowEnemy.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\gfc\include\gfc_audio.h" />
@@ -210,18 +220,28 @@
     <ClInclude Include="..\include\gf2d_graphics.h" />
     <ClInclude Include="..\include\gf2d_sprite.h" />
     <ClInclude Include="actor.h" />
+    <ClInclude Include="blueEnemy.h" />
     <ClInclude Include="body.h" />
+    <ClInclude Include="boss2.h" />
+    <ClInclude Include="boss3.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="collision.h" />
     <ClInclude Include="dynamic_body.h" />
     <ClInclude Include="entity.h" />
+    <ClInclude Include="greenEnemy.h" />
     <ClInclude Include="gui.h" />
+    <ClInclude Include="kehoeBoss.h" />
     <ClInclude Include="level.h" />
+    <ClInclude Include="metronome.h" />
     <ClInclude Include="player.h" />
+    <ClInclude Include="powerup.h" />
     <ClInclude Include="projectile.h" />
     <ClInclude Include="randEnemy.h" />
+    <ClInclude Include="redEnemy.h" />
     <ClInclude Include="space.h" />
     <ClInclude Include="weapon.h" />
+    <ClInclude Include="whiteEnemy.h" />
+    <ClInclude Include="yellowEnemy.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

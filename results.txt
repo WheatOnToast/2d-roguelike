@@ -1,6 +1,6 @@
 ---====Hope you enjoyed the game!====---
 
  ---==== Game Statistics ====---
-- Number of times jumped: 4
-- Number of bullets shot: 0
+- Number of times jumped: 13
+- Number of bullets shot: 5
 - Number of weapon switches: 0

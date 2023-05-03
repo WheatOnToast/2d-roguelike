@@ -7,19 +7,26 @@
 #include "level.h"
 #include "projectile.h"
 #include "player.h"
+#include "powerup.h"
+
+#include "../2dgf/redEnemy.h"
+#include "../2dgf/blueEnemy.h"
+#include "../2dgf/greenEnemy.h"
+#include "../2dgf/yellowEnemy.h"
 
 void projectile_think(Entity* self);
 void projectile_draw(Entity* self);
 void projectile_update(Entity* self);
 
-
+int projectile_health = 10;
+int projectile_size = 1;
 Entity* create_projectile_right(Vector2D position)
 {
     Entity* ent;
     ent = entity_new();
     if (!ent)return;
     ent->sprite = gf2d_sprite_load_all(
-        "images/bullet.png",
+        "images/bullet_yellow.png",
         32,
         32,
         16,
@@ -28,15 +35,15 @@ Entity* create_projectile_right(Vector2D position)
     ent->think = projectile_think_right;
     ent->update = projectile_update;
     ent->draw = projectile_draw;
-    ent->shape = gfc_shape_circle(0, 0, 50);// shape position becomes offset from entity position, in this case zero
+    ent->shape = gfc_shape_circle(8 * projectile_size, 4 * projectile_size, 16 * projectile_size);// shape position becomes offset from entity position, in this case zero
     ent->body.shape = &ent->shape;
     ent->body.worldclip = 1;
     ent->body.team = 1;
     vector2d_copy(ent->position, position);
-    ent->drawOffset = vector2d(0, 0);
+    ent->drawOffset = vector2d(8, 8);
     ent->speed = 2.5;
-    ent->frame = 1;
-    ent->health = 30;
+    ent->health = projectile_health;
+    ent->bulletType = 3;
     return ent;
 }
 
@@ -46,7 +53,7 @@ Entity* create_projectile_left(Vector2D position)
     ent = entity_new();
     if (!ent)return;
     ent->sprite = gf2d_sprite_load_all(
-        "images/bullet.png",
+        "images/bullet_green.png",
         32,
         32,
         16,
@@ -55,14 +62,15 @@ Entity* create_projectile_left(Vector2D position)
     ent->think = projectile_think_left;
     ent->update = projectile_update;
     ent->draw = projectile_draw;
-    ent->shape = gfc_shape_circle(0, 0, 50);// shape position becomes offset from entity position, in this case zero
+    ent->shape = gfc_shape_circle(8 * projectile_size, 4 * projectile_size, 16 * projectile_size);// shape position becomes offset from entity position, in this case zero
     ent->body.shape = &ent->shape;
     ent->body.worldclip = 1;
     ent->body.team = 1;
     vector2d_copy(ent->position, position);
-    ent->drawOffset = vector2d(0, 0);
+    ent->drawOffset = vector2d(8 * projectile_size, 8 * projectile_size);
     ent->speed = 2.5;
-    ent->health = 30;
+    ent->health = projectile_health;
+    ent->bulletType = 2;
     return ent;
 }
 
@@ -72,7 +80,7 @@ Entity* create_projectile_up(Vector2D position)
     ent = entity_new();
     if (!ent)return;
     ent->sprite = gf2d_sprite_load_all(
-        "images/bullet.png",
+        "images/bullet_blue.png",
         32,
         32,
         16,
@@ -81,14 +89,15 @@ Entity* create_projectile_up(Vector2D position)
     ent->think = projectile_think_up;
     ent->update = projectile_update;
     ent->draw = projectile_draw;
-    ent->shape = gfc_shape_circle(0, 0, 50);// shape position becomes offset from entity position, in this case zero
+    ent->shape = gfc_shape_circle(8 * projectile_size, 4 * projectile_size, 16 * projectile_size);
     ent->body.shape = &ent->shape;
     ent->body.worldclip = 1;
     ent->body.team = 1;
     vector2d_copy(ent->position, position);
-    ent->drawOffset = vector2d(0, 0);
+    ent->drawOffset = vector2d(8 * projectile_size, 8 * projectile_size);
     ent->speed = 2.5;
-    ent->health = 1000;
+    ent->health = projectile_health;
+    ent->bulletType = 0;
     return ent;
 }
 
@@ -98,7 +107,7 @@ Entity* create_projectile_down(Vector2D position)
     ent = entity_new();
     if (!ent)return;
     ent->sprite = gf2d_sprite_load_all(
-        "images/bullet.png",
+        "images/bullet_red.png",
         32,
         32,
         16,
@@ -107,15 +116,15 @@ Entity* create_projectile_down(Vector2D position)
     ent->think = projectile_think_down;
     ent->update = projectile_update;
     ent->draw = projectile_draw;
-    ent->shape = gfc_shape_circle(0, 0, 50);// shape position becomes offset from entity position, in this case zero
+    ent->shape = gfc_shape_circle(8 * projectile_size, 4 * projectile_size, 16 * projectile_size);
     ent->body.shape = &ent->shape;
     ent->body.worldclip = 1;
     ent->body.team = 1;
     vector2d_copy(ent->position, position);
-    ent->drawOffset = vector2d(0, 0);
+    ent->drawOffset = vector2d(8 * projectile_size, 8 * projectile_size);
     ent->speed = 2.5;
-    ent->frame = 1;
-    ent->health = 1000;
+    ent->health = projectile_health;
+    ent->bulletType = 1;
     return ent;
 }
 Entity* projectile_new(Entity* parent, Vector2D position, Vector2D dir, float speed, float damage, const char* actor)
@@ -164,8 +173,22 @@ void projectile_draw(Entity* self)
     gf2d_draw_circle(drawPosition, 1000, GFC_COLOR_YELLOW);
     mf+=0.1;
     if (mf >= 16.0)mf = 0;
-    Sprite* bullet = gf2d_sprite_load_all("images/bullet.png", 32, 32, 0, 0);
+    Sprite* bullet = { 0 };
+    if (self->bulletType == 0) {
+        Sprite* bullet = gf2d_sprite_load_all("images/bullet_red.png", 32 , 32 , 0, 0);
+    }
+    else if (self->bulletType == 1) {
+        Sprite* bullet = gf2d_sprite_load_all("images/bullet_green.png", 32 , 32 , 0, 0);
+    }
+    else if (self->bulletType == 2) {
+        Sprite* bullet = gf2d_sprite_load_all("images/bullet_blue.png", 32 , 32 , 0, 0);
+    }
+    else if (self->bulletType == 3){
+        Sprite* bullet = gf2d_sprite_load_all("images/bullet_yellow.png", 32 , 32 , 0, 0);
+    }
+
     int mf = 0;
+
     gf2d_sprite_draw(
         bullet,
         self->position,
@@ -182,6 +205,23 @@ void projectile_draw(Entity* self)
 
 void projectile_think_left(Entity* self)
 {
+    Entity* ent_list = entity_get_list();
+    for (int i = 0; i < 1024; i++) {
+        if (ent_list[i].enemyType == 3 || ent_list[i].enemyType == 5) {
+
+
+            Vector2D a = greenEnemy_get_position(&ent_list[i]);
+            Vector2D b = self->position;
+
+            if (vector2d_magnitude_between(a, b) < 150) {
+          
+                powerup_new(vector2d(ent_list[i].position.x, ent_list[i].position.y));
+                ent_list[i].health--;
+            }
+            break;
+        }
+    }
+
     if (!self)return;
     self->health--;
     self->position.x -= 10;
@@ -190,6 +230,23 @@ void projectile_think_left(Entity* self)
 
 void projectile_think_right(Entity* self)
 {
+    Entity* ent_list = entity_get_list();
+    for (int i = 0; i < 1024; i++) {
+        if (ent_list[i].enemyType == 4 || ent_list[i].enemyType == 5) {
+
+
+            Vector2D a = yellowEnemy_get_position(&ent_list[i]);
+            Vector2D b = self->position;
+
+            if (vector2d_magnitude_between(a, b) < 150) {
+                
+                powerup_new(vector2d(ent_list[i].position.x, ent_list[i].position.y));
+                ent_list[i].health--;
+            }
+            break;
+        }
+    }
+
     if (!self)return;
     self->health--;
     self->position.x += 10;
@@ -198,6 +255,23 @@ void projectile_think_right(Entity* self)
 
 void projectile_think_up(Entity* self)
 {
+    Entity* ent_list = entity_get_list();
+    for (int i = 0; i < 1024; i++) {
+        if (ent_list[i].enemyType == 2 || ent_list[i].enemyType == 5) {
+
+
+            Vector2D a = blueEnemy_get_position(&ent_list[i]);
+            Vector2D b = self->position;
+
+            if (vector2d_magnitude_between(a, b) < 150) {
+             
+                powerup_new(vector2d(ent_list[i].position.x, ent_list[i].position.y));
+                ent_list[i].health--;
+            }
+            break;
+        }
+    }
+
     if (!self)return;
     self->health--;
     self->position.y -= 10;
@@ -206,7 +280,26 @@ void projectile_think_up(Entity* self)
 
 void projectile_think_down(Entity* self)
 {
+
     if (!self)return;
+
+    Entity* ent_list = entity_get_list();
+    for (int i = 0; i < 1024; i++) {
+        if (ent_list[i].enemyType == 1 || ent_list[i].enemyType == 5) {
+
+            
+            Vector2D a = redEnemy_get_position(&ent_list[i]);
+            Vector2D b = self->position;
+            
+            if (vector2d_magnitude_between(a, b) < 150) {
+              
+                powerup_new(vector2d(ent_list[i].position.x, ent_list[i].position.y));
+                ent_list[i].health--;
+            }
+            break;
+        }
+    }
+
     self->health--;
     self->position.y += 10;
     if (self->health <= 0)entity_free(self);
@@ -246,6 +339,22 @@ void projectile_update(Entity* self)
     }
     gf2d_collision_list_free(collision);
     entity_free(self);
+}
+
+int projectile_getHealth() {
+    return projectile_health;
+}
+
+void projectile_setHealth(int num) {
+    projectile_health = num;
+}
+
+int projectile_getSize() {
+    return projectile_size;
+}
+
+void projectile_setSize(int size) {
+    projectile_size = size;
 }
 
 /*eol@eof*/

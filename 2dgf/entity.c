@@ -11,6 +11,7 @@ typedef struct
     SJson* entity_def;
 }EntityManager;
 static EntityManager entity_manager = { 0 };
+
 void entity_manager_close()
 {
     entity_free_all();
@@ -77,13 +78,13 @@ void entity_draw(Entity* ent)
             drawPosition,
             NULL,
             &ent->drawOffset,
-            &ent->rotation,
+            NULL,
             NULL,
             NULL,
             (Uint32)ent->frame);
     }
     gf2d_draw_pixel(drawPosition, GFC_COLOR_YELLOW);
-    gf2d_draw_circle(drawPosition, 10, GFC_COLOR_YELLOW);
+    gf2d_draw_shape(ent->shape,GFC_COLOR_YELLOW,drawPosition);
 }
 void entity_draw_all()
 {
@@ -176,5 +177,9 @@ Bool entity_clip(Entity* entA, Entity* entB)
     {
         return 0;
     }
+}
+
+Entity* entity_get_list() {
+    return entity_manager.entity_list;
 }
 /*eol@eof*/

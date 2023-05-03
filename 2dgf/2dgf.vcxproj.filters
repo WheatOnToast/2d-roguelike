@@ -129,6 +129,36 @@
     <ClCompile Include="gui.c">
       <Filter>Header Files</Filter>
     </ClCompile>
+    <ClCompile Include="metronome.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="powerup.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="redEnemy.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="blueEnemy.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="greenEnemy.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="yellowEnemy.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kehoeBoss.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="boss2.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="boss3.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="whiteEnemy.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\gf2d_draw.h">
@@ -246,6 +276,36 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="gui.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="metronome.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="powerup.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="redEnemy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="blueEnemy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="greenEnemy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="yellowEnemy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="kehoeBoss.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="boss2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="boss3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="whiteEnemy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
