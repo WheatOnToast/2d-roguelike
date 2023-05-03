@@ -9,7 +9,7 @@ This game will have you controlling two characters at the same time shooting ene
 - **"E"** - Character Switch (Press this button to change players)
 - **"I"** - Power up (Press this button to power up)
 
-# Common Deliverables
+# Midterm Project Deliverables
 
 - Functioning Entity System **COMPLETED (Player and projectiles can be seen within the game)**
 - Fully interact-able environment **COMPLETED (Player can jump on platforms)**
@@ -22,7 +22,7 @@ This game will have you controlling two characters at the same time shooting ene
 - 5 varieties of enemies for top & bottom screen **(partially completed)**
 - 5 stat boosting items **COMPLETED**
 
-# Personal FINAL Deliverables
+# Final Project Deliverables
 
 - Contained Game Experience **COMPLETED**
 - Audio **COMPLETED**
@@ -35,5 +35,7 @@ This game will have you controlling two characters at the same time shooting ene
 - 3 Bosses **COMPLETED**
 - AI controlling other player **COMPLETED**
 
-9/10 Final deliverables done
-9.5/10 Midterm deliverables done
+- 9/10 Final deliverables done
+- 9.5/10 Midterm deliverables done
+
+- 18.5/20 in total done for the final project
