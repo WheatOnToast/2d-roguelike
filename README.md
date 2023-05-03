@@ -35,6 +35,8 @@ This game will have you controlling two characters at the same time shooting ene
 - 3 Bosses **COMPLETED**
 - AI controlling other player **COMPLETED**
 
+#
+
 - 9/10 Final deliverables done
 - 9.5/10 Midterm deliverables done
 
